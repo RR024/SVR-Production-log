@@ -29,9 +29,10 @@ export default async function reports(ctx) {
       h('div', { class: 'filter-foot' },
         h('div', { class: 'chips' },
           ...[['Last 7 days', 6], ['Last 30 days', 29], ['Last 90 days', 89]].map(([label, d]) =>
-            h('button', { class: 'chip', type: 'button', onclick: () => { from.value = addDaysISO(today, -d); to.value = today; apply() } }, label)),
+            h('button', { class: 'chip', type: 'button', onclick: () => { from.value = addDaysISO(today, -d); to.value = today; apply() } }, label)
+          ),
           h('button', { class: 'chip', type: 'button', onclick: () => { from.value = ''; to.value = ''; apply() } }, 'All time')))),
-    host,
+    host
   )
 
   Promise.all([listCatalog('machines'), listCatalog('parts')]).then(([ms, ps]) => {
@@ -105,7 +106,8 @@ export default async function reports(ctx) {
       if (!s.entry_count) {
         host.replaceChildren(
           h('section', { class: 'stats' }, statCard("Today's production", fmtNum(todayStats.today_quantity), 'all machines & parts')),
-          emptyState({ iconName: 'chart', title: 'No production in this selection', text: 'Try a wider date range or remove the machine/part filter.' }))
+          emptyState({ iconName: 'chart', title: 'No production in this selection', text: 'Try a wider date range or remove the machine/part filter.' })
+        )
         return
       }
       host.replaceChildren(
@@ -125,7 +127,7 @@ export default async function reports(ctx) {
                 [...s.by_day].reverse().map((d) => h('tr', null, h('td', null, formatLogDate(d.date)), h('td', { class: 'num' }, fmtNum(d.quantity)))),
                 h('tr', { class: 'table-total' },
                   h('th', { scope: 'row' }, 'Total'),
-                  h('th', { class: 'num' }, fmtNum(s.total_quantity))))))))),
+                  h('th', { class: 'num' }, fmtNum(s.total_quantity)))))))),
         h('div', { class: 'two-col' },
           aggregateTable(s.by_machine, 'By machine', 'Machine code', 'Machine name'),
           aggregateTable(s.by_part, 'By part', 'Part code', 'Part name')),
